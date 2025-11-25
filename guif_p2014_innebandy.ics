@@ -1,7 +1,6 @@
 "BEGIN:VCALENDAR
 VERSION:2.0
 CALSCALE:GREGORIAN
-Här under genererar vi raderna som inkluderas ovanför
 BEGIN:VEVENT
 SUMMARY:Match Täfteå IK samling 13:00
 DTSTART:20251025T133000
