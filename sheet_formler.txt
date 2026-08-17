@@ -1,0 +1,66 @@
+# Lägg t.ex. i B10, tar information från Matcher fliken, och gör så att det blir en match per rad.
+=MAP(
+  Matcher!F8:F;
+  Matcher!G8:G;
+  Matcher!H8:H;
+  LAMBDA(hemma; borta; matchtid;
+    IF(
+      ISDATE(matchtid);
+      TEXTJOIN(CHAR(10); TRUE;
+        "BEGIN:VEVENT";
+        "UID:" & TEXT(matchtid;"yyyymmdd\THHmmss") & "-" & ROW(matchtid) & "@guif";
+        "DTSTAMP:" & TEXT(NOW();"yyyymmdd\THHmmss") & "Z";
+
+        "SUMMARY:Match " & hemma & " - " & borta &
+          " " & TEXT(matchtid;"HH:mm") &
+          ", samling " & TEXT(matchtid-TIME(0;30;0);"HH:mm");
+
+        "DTSTART;TZID=Europe/Stockholm:" &
+          TEXT(matchtid-TIME(0;30;0);"yyyymmdd\THHmmss");
+
+        "DTEND;TZID=Europe/Stockholm:" &
+          TEXT(matchtid+TIME(1;0;0);"yyyymmdd\THHmmss");
+
+        "END:VEVENT"
+      );
+      ""
+    )
+  )
+)
+
+
+# Lägg t.ex. i B2. Sammanställer informationen från ovan, till en cell som går att kopiera till en ics fil.
+=TEXTJOIN(CHAR(10); TRUE;
+ "BEGIN:VCALENDAR";
+ "VERSION:2.0";
+ "CALSCALE:GREGORIAN";
+ "X-WR-CALNAME:GUIF P2014 Innebandy";
+ "X-WR-CALDESC:Matcher för GUIF P2014 säsongen 2025/2026";
+ "X-WR-TIMEZONE:Europe/Stockholm";
+
+ "BEGIN:VTIMEZONE";
+ "TZID:Europe/Stockholm";
+ "X-LIC-LOCATION:Europe/Stockholm";
+
+ "BEGIN:STANDARD";
+ "TZOFFSETFROM:+0200";
+ "TZOFFSETTO:+0100";
+ "TZNAME:CET";
+ "DTSTART:19701025T030000";
+ "RRULE:FREQ=YEARLY;BYMONTH=10;BYDAY=-1SU";
+ "END:STANDARD";
+
+ "BEGIN:DAYLIGHT";
+ "TZOFFSETFROM:+0100";
+ "TZOFFSETTO:+0200";
+ "TZNAME:CEST";
+ "DTSTART:19700329T020000";
+ "RRULE:FREQ=YEARLY;BYMONTH=3;BYDAY=-1SU";
+ "END:DAYLIGHT";
+
+ "END:VTIMEZONE";
+
+ TEXTJOIN(CHAR(10); TRUE; B17:B);
+
+ "END:VCALENDAR"
+)
